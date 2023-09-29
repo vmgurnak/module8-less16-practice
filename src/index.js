@@ -17,52 +17,55 @@
 // 2 Повідомлення про загальну вартість покупки, якщо кошик порожній, то повідомлення "Your basket is empty"
 // 3 Кнопку для очищення кошика, після натискання на неї всі товари видаляються, а користувача перенаправляємо на сторінку Home
 
+// Дефолтный импорт массива продуктов products.json
 import instruments from './products.json';
+// console.log(instruments);
+// Именнованный импорт функции разметки
 import { createMarkup } from './templates/templatePLP';
+// Дефолтный импорт массива common.json с ключом
 import common from './common.json';
 
-const products = JSON.parse(localStorage.getItem(common.LS_PRODUCTS)) ?? [];
+// Объект селекторов
 const selectors = {
   list: document.querySelector('.js-list'),
 };
 
+// Создание разметки
 selectors.list.insertAdjacentHTML('beforeend', createMarkup(instruments));
-selectors.list.addEventListener('click', handlerAdd);
 
+// Массив для корзины, берет значение из localStorage, если ничего нет, тогда пустой массив
+const products = JSON.parse(localStorage.getItem(common.LS_PRODUCTS)) ?? [];
+
+// Слушатель с делегированрием, событие клик на элементе li
+selectors.list.addEventListener('click', handlerAdd);
 function handlerAdd(evt) {
+  //  Событие работает только при клике на кнопку, класс js-add на кнопке
   if (!evt.target.classList.contains('js-add')) {
     return;
   }
 
+  // Получение первого родителя с классом .js-product' - ли элемент
   const product = evt.target.closest('.js-product');
-  const productId = Number(product.dataset.id);
-  const currentProduct = instruments.find(({ id }) => id === productId);
-  const idx = products.findIndex(({ id }) => id === productId);
+  // Получение дата атрибута id, приведение к числу, при клике на кнопку товара
+  const productID = Number(product.dataset.id);
+  // Получение информации по продукту элемент массива instruments совпадающий по id с выбранным при клике, метод find
+  const currentProduct = instruments.find(({ id }) => id === productID);
+  // console.log(currentProduct);
 
-  if (idx === -1) {
+  // Есть ли в массиве продуктов, которіе уже покупали, индекс продукта с id таким же, ка кликнули по карточке
+  // Получение индекса элемента массива корзины, если товар с id по которому клик уже есть в корзине, или -1, если его нет
+  const idx = products.findIndex(({ id }) => id === productID);
+  // Добавление объекта с характеристиками продукта в корзину
+  // Добавление ключа qty элементам массива корзины для подсчета количества одинаковых товаров
+  if (idx == -1) {
+    // Ключ qty по индексу продукта [idx] увеличивается на 1
     currentProduct.qty = 1;
     products.push(currentProduct);
   } else {
     products[idx].qty += 1;
   }
-
+  // Вывод в консоль корзины (массив объектов)
+  // console.log(products);
+  // Запись в localStorage
   localStorage.setItem(common.LS_PRODUCTS, JSON.stringify(products));
 }
-
-const cart = new Map();
-
-function addToCart(item) {
-  if (cart.has(item)) {
-    cart.set(item, cart.get(item) + 1);
-  } else {
-    cart.set(item, 1);
-  }
-}
-
-addToCart('item1');
-addToCart('item2');
-addToCart('item1');
-
-console.log(cart);
-
-// так можно в корзину добавлять

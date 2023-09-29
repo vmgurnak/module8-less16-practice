@@ -6,19 +6,27 @@
 //     "description": "Кутова шліфувальна машина Dnipro-M GS-98 – модель, яка поєднує в собі оптимальне співвідношення потужності, ваги та мобільності. Конструкція шліфмашини сприяє зручній та надійній роботі, навіть однією рукою. Інструмент ідеально підходить для виконання різу на висоті та використання у важкодоступних місцях. Низький рівень шуму та вібрації, двопозиційне розташування додаткової рукоятки під кутом 100 градусів, мінімізує втому під час шліфування."
 // }
 
+// Функция шаблона разметки
+// На каждой итерации массива методом map получаем объект
 function createMarkup(arr) {
   return arr
     .map(
-      ({ price, name, img, id, description }) => `
-    <li data-id="${id}" class="product-card js-product">
+      ({
+        id,
+        img,
+        name,
+        price,
+        description,
+      }) => `  <li data-id="${id}" class="product-card js-product">
         <img src="${img}" alt="${name}" class="product-img">
         <h2 class="product-title">${name}</h2>
         <p class="product-description">${description}</p>
         <p class="product-price">${price} грн</p>
         <button class="product-add-btn js-add">Add to basket</button>
-    </li>`
+      </li>`
     )
     .join('');
 }
 
-export {createMarkup};
+// Именнованный экспорт функции
+export { createMarkup };
